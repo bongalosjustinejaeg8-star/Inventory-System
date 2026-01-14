@@ -1,6 +1,6 @@
 from openpyxl import load_workbook, Workbook
 
-filename = "DatabaseCap.xlsx"
+filename = "Database.xlsx"
 
 # Try to load the workbook, create if it doesn't exist
 try:
@@ -9,7 +9,7 @@ try:
 except FileNotFoundError:
     wb = Workbook()
     ws = wb.active
-    ws.append(["Product Name", "Stocks"])  # headers
+    ws.append(["Product ID", "Product Name", "Category", "Price", "Stock Quantity", "Reorder Level" ])  # headers
 
 
 # Read and display stored data
@@ -20,19 +20,23 @@ def print_inv():
 
 
 def add_new():
-    fruit = input("Enter Product Name: ").title()
+    Id = input("Enter Product ID: ").upper()
+    name = input("Enter Product Name: ").title()
+    category = input("Enter Product Category: ").title()
+    price = int(input("Enter Price: "))
     qty = int(input("Enter Stocks: "))
-    ws.append([fruit, qty, ])
-    wb.save("DatabaseCap.xlsx")
-    print(f"Added {fruit} with {qty} stocks")
+    rodlvl = int(input("Enter Reorder Level: "))
+    ws.append([Id, name,category,price,qty,rodlvl])
+    wb.save("Database.xlsx")
+    print(f"Added {name} with {qty} stocks")
 
 
 def change_stock():
-    product_name = input("enter product name: ").title()
+    product_id = input("enter product ID: ").upper()
     found = False
 
     for rows in ws.iter_rows(min_row=2):
-        if rows[0].value == product_name:
+        if rows[0].value == product_id:
             found = True
     
     if not found: 
@@ -44,19 +48,19 @@ def change_stock():
     quantity = int(input("enter new quantity: "))
       
     for rows in ws.iter_rows(min_row=2):
-        if rows[0].value == product_name:
-            rows[1].value = quantity
-            print(f"{product_name} stocks updated to {quantity}")
+        if rows[0].value == product_id:
+            rows[5].value = quantity
+            print(f"{product_id} stocks updated to {quantity}")
             wb.save("DatabaseCap.xlsx")
             found = True
             break
 
 def remv_item():
-    item = input("Enter Product to remove: ").title()
+    item = input("Enter Product ID to remove: ").upper()
     found = False
     for row in ws.iter_rows(min_row=2):
         if row[0].value == item:
-            decision = input(f"are you sure you want to remove {row[0].value}? (y/n): ").lower()
+            decision = input(f"are you sure you want to remove {row[1].value}? (y/n): ").lower()
             if decision == "y":
                 print(f"{row[0].value} removed")
                 row[0].value = None
@@ -69,6 +73,10 @@ def remv_item():
         d = input("item id not found, wanna try again? y/n: ").lower()
         if d == "y":
             remv_item()
+
+
+
+
 
 
 while True:
