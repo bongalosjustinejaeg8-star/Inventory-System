@@ -29,6 +29,7 @@ def printreciept(sales_id):
         if row[0] == sales_id:
             print(row[2], row[3], row[4], row[5])
     print("-"*10)
+
 def update_stock(code, qty_sold):
     for row in ws1.iter_rows(min_row=2):
         if str(row[0].value).strip().upper() == code:
@@ -41,12 +42,11 @@ def update_stock(code, qty_sold):
             wb1.save(Inventory_Database)
             return True
     return False 
-def buy():
+def buy(sale_input):
     now = datetime.now()
     sales_id = random.randint(10000, 99999)
 
     while True:
-        sale_input = input("Enter product code*qty or X to finish: ").upper()
         if sale_input == "X":
             break
 
