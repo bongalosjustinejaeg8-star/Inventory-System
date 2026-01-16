@@ -70,6 +70,3 @@ def buy():
     wb1.save("Database.xlsx")
     printreciept(sales_id)
     print("Sale complete!")
-
-    
-printreciept(31258)
