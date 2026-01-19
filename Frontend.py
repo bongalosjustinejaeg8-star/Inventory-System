@@ -44,6 +44,49 @@ product_entry = Entry(salesframe)
 product_entry.grid(row=1,column=3,columnspan=3,sticky="we")
 item_list = Listbox(salesframe, width=40)
 item_list.grid(row=2,column=3,columnspan=3,rowspan=7,sticky='nsew')
+
+def addtocart(event=None):
+    Backend.buy(product_entry.get())
+    item_list.insert(END,)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 logout_button = Button(salesframe,text="Log Out")
 logout_button.grid(row=1,column=0,sticky="nsew",columnspan=2)
 add_product_button = Button(salesframe,text="Add PRoduct")
@@ -62,6 +105,11 @@ remove_user_button = Button(salesframe,text="Remove User")
 remove_user_button.grid(row=4,column=1,sticky='nsew')
 finish_transac_button = Button(salesframe,text="Finish Transaction")
 finish_transac_button.grid(row=5,column=1,sticky="nsew")
+
+
+
+
+
 
 
 

@@ -14,16 +14,24 @@ ws3 = wb3.active
 
 sales_id = random.randint(10000, 99999)
 
+
+
+
+
+
+
 def login(user,password):
     for row in ws3.iter_rows(min_row = 1,values_only = True):
         if row[0] == user and row[1] == password:
             return True
     return False    
-def checkadmin(role):
+def checkadmin():
     for row in ws3.iter_rows(min_row = 1,values_only = True):
         if row[1] == role:
             return True
     return False
+
+
 def check_product(code):
     for cell in ws1.iter_rows(min_row=1, max_col=1, values_only=True):
         if cell[0] == code:
@@ -42,7 +50,7 @@ def print_reciept(sales_id):
     for row in ws2.iter_rows(min_row=1,values_only=True):
         if row[0] == sales_id:
             reciept = (row[2], row[3], row[4], row[5])
-    return reciept
+    print(reciept)
 
 def update_stock(code, qty_sold):
     for row in ws1.iter_rows(min_row=2):
@@ -59,30 +67,26 @@ def update_stock(code, qty_sold):
 
 def buy(sale_input):
     now = datetime.now()
+    if "*" in sale_input:
+        try:
+            code, qty = sale_input.split("*")
+            qty = int(qty)
+        except ValueError:
+            return False
+    else:
+        code = sale_input
+        qty = 1
 
-    while True:
-        if sale_input == "X":
-            break
-        if "*" in sale_input:
-            try:
-                code, qty = sale_input.split("*")
-                qty = int(qty)
-            except ValueError:
-                return "invalid quantity, pls enter an integer instead"
-        else:
-            code = sale_input
-            qty = 1
+    if check_product(code):
 
-        if not check_product(code):
-            input("Item not found. Press Enter to continue...")
-            continue
-        
         update_stock(code,qty)
-        p = price(code)
+        p = print_price(code)
         subtotal = float(p) * qty
         ws2.append([sales_id, now.strftime("%Y-%m-%d %H:%M:%S"), code, qty, p, float(subtotal)])
 
+    print(sales_id, now.strftime("%Y-%m-%d %H:%M:%S"), code, qty, p, float(subtotal))
+buy("B002*2")
+    
+def save():
     wb2.save("sale.xlsx")
     wb1.save("Database.xlsx")
-    printreciept(sales_id)
-    print("Sale complete!")
