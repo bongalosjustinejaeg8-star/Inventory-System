@@ -14,12 +14,16 @@ ws3 = wb3.active
 
 sales_id = random.randint(10000, 99999)
 
-def login(user,role):
+def login(user,password):
     for row in ws3.iter_rows(min_row = 1,values_only = True):
-        if row[0] == user and row[1] == role:
+        if row[0] == user and row[1] == password:
             return True
     return False    
-
+def checkadmin(role):
+    for row in ws3.iter_rows(min_row = 1,values_only = True):
+        if row[1] == role:
+            return True
+    return False
 def check_product(code):
     for cell in ws1.iter_rows(min_row=1, max_col=1, values_only=True):
         if cell[0] == code:
