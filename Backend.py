@@ -12,7 +12,14 @@ ws2 = wb2.active
 wb3 = load_workbook(user_database)
 ws3 = wb3.active
 
-
+def chnage_stock(product_id,new_stock):
+    for row in ws1.iter_rows(min_row=1):
+        if row[0].value == product_id:
+            row[4].value = new_stock
+            wb1.save("Database.xlsx")
+            return True
+    return False
+    
 def product_name(product_id):
     for row in ws1.iter_rows(min_row=1,values_only=True):
         if row[0] == product_id:
@@ -72,4 +79,4 @@ def buy(product_id,qty,sales_id):
 def save():
     wb2.save("sale.xlsx")
     wb1.save("Database.xlsx")
-print_reciept(8619)
+chnage_stock("A001",23)

@@ -3,6 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk
 import Backend
 import random
+from openpyxl import load_workbook, Workbook
 POS = Tk()
 POS.geometry("800x1000")
 loginframe = Frame(POS)
@@ -15,7 +16,8 @@ Temp_Total = 0.0
 total_var = StringVar()
 total_var.set("Total: ")
 change = 0.0
-
+is_admin = False
+is_audit = False
 
 #----------------------LOGIN FRAME-------------------------------------------------------------------
 for i in range(11):
@@ -33,6 +35,8 @@ user_password.grid(row=5,column=5,sticky="ew")
 
 def login_user():
     if Backend.login(user_entry.get(),user_password.get()):
+        user_entry.delete(0,END)
+        user_password.delete(0,END)
         loginframe.pack_forget()
         salesframe.pack(fill = "both",expand=True)
     else:
@@ -108,23 +112,64 @@ def finish_transaction():
 def printreceipt():
     popup = Toplevel(POS)
     popup.title("PRINT RECEIPT")
-    popup.geometry("250x180")
+    popup.geometry("700x500")
     popup.grab_set()
-    for i in range(2):
-        popup.columnconfigure(i,weight=1)
-        popup.rowconfigure(i,weight=1)
-    Label(popup,text="Enter Trasaction ID").grid(row=0,column=0)
+    Label(popup,text="Enter Trasaction ID").pack()
     transac_id = Entry(popup)
-    transac_id.grid(row=0,column=1,sticky="nsew")
+    transac_id.pack()
+    item_list = ttk.Treeview(popup,columns=("Product","Quantity","Price","Subtotal"),show="headings",height=10)
+    item_list.pack()
     def printrec():
-            popup1 = Toplevel(POS)
+        wb2 = load_workbook("sale.xlsx")
+        ws2 = wb2.active
+        for row in ws2.iter_rows(min_row=1,values_only=True):
+            if row[0] == int(transac_id.get().strip()):
+                item_list.insert("",END,values=(row[2], row[3], row[4], row[5]))
             
-            popup.destroy
-        
+    def close():
+        popup.destroy()
+    Button(popup,text="Submit",command=printrec).pack()
+    Button(popup,text="Close",command=close).pack()
 
-    Button(popup,text="Submit",command=printrec).grid(row=1,column=0,columnspan=2,sticky="nsew")
+def logout():
+    pop = Toplevel(POS)
+    pop.title("WARNING")
+    pop.geometry("300x200")
+    Label(pop,text="LOG OUT?",font=("times new roman",18,"bold")).pack()
+    def yeah():
+        pop.destroy()
+        salesframe.pack_forget()
+        loginframe.pack(fill = "both",expand=True)
+    def nah():
+        pop.destroy()
+    Button(pop,text="Yes",command=yeah).pack()
+    Button(pop,text="Nah",command=nah).pack()
 
-
+def change_stock():
+    Inventory_Database = "Database.xlsx"
+    wb1 = load_workbook(Inventory_Database)
+    ws1 = wb1.active
+    popup = Toplevel(POS)
+    popup.title("Change stock")
+    popup.geometry("700x500")
+    popup.grab_set()
+    Label(popup,text="Enter Product ID").pack()
+    product_entry = Entry(popup)
+    product_entry.pack()
+    Label(popup,text="Enter New Stock").pack()
+    stock_entry = Entry(popup)
+    stock_entry.pack()
+    def confirmstock():
+        if Backend.check_product(product_entry.get().strip().upper()):
+            Backend.chnage_stock(product_entry.get().strip(),stock_entry.get().strip())
+            messagebox.showinfo("STOCKS","Stocks has been updated")
+            popup.destroy()
+        else:
+            messagebox.showwarning("WARNING","ID NOT FOUND")
+    def close():
+        popup.destroy()
+    Button(popup,text="Submit",command=confirmstock).pack()
+    Button(popup,text="Cancel",command=close).pack()
 
 
 
@@ -155,13 +200,13 @@ def printreceipt():
 
 product_entry.bind("<Return>",addtocart)
 Label(salesframe,textvariable=total_var,font=("arial",18)).grid(column=4,row=9,sticky="nsew",pady=10)
-logout_button = Button(salesframe,text="Log Out")
+logout_button = Button(salesframe,text="Log Out",command=logout)
 logout_button.grid(row=1,column=0,sticky="nsew",columnspan=2)
 add_product_button = Button(salesframe,text="Add PRoduct")
 add_product_button.grid(row=2,column=0,sticky="nsew")
 remove_product_button = Button(salesframe,text="Remove PRoduct")
 remove_product_button.grid(row=3,column=0,sticky="nsew")
-change_stock_button = Button(salesframe,text="Change Stock")
+change_stock_button = Button(salesframe,text="Change Stock",command=change_stock)
 change_stock_button.grid(row=4,column=0,sticky='nsew')
 print_reciept_button = Button(salesframe,text="Print reciept",command=printreceipt)
 print_reciept_button.grid(row=5,column=0,sticky='nsew')
