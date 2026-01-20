@@ -1,4 +1,6 @@
 from tkinter import *
+from tkinter import messagebox
+from tkinter import ttk
 import Backend
 POS = Tk()
 POS.geometry("800x1000")
@@ -42,15 +44,31 @@ for i in range(7):
 Label(salesframe,text="POSSYS SOLUTIONS",font=('times new roman',24,'bold')).grid(row=0,column=3,columnspan=1,sticky='nswe')
 product_entry = Entry(salesframe)
 product_entry.grid(row=1,column=3,columnspan=3,sticky="we")
-item_list = Listbox(salesframe, width=40)
+item_list = ttk.Treeview(salesframe,columns=("Product","Quantity","Price","Subtotal"),show="headings",height=10)
 item_list.grid(row=2,column=3,columnspan=3,rowspan=7,sticky='nsew')
 
 def addtocart(event=None):
-    Backend.buy(product_entry.get())
-    item_list.insert(END,)
+    product = product_entry.get()
+    if "*" in product_entry.get():
+        try:
+            product_code, qty = product.split("*")
+            product_code = product_code.strip()
+            qty = int(qty.strip())
+        except:
+            messagebox.showerror("Invalid entry format!", "Use: Code * Quantity")
+            product_entry.delete(0, END)
+            return
+    else:
+        product_code = product
+        qty = 1
+    
+    if Backend.check_product(product_code):
+        Backend.buy(product_code,qty)
+        item_list.insert("",END,values=(Backend.product_name(product_code),qty,Backend.get_price(product_code),float(qty*Backend.get_price(product_code))))
+        product_entry.delete(0, END)
 
-
-
+    
+product_entry.bind("<Return>",addtocart)
 
 
 

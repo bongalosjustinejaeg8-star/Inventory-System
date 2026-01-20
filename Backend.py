@@ -14,10 +14,11 @@ ws3 = wb3.active
 
 sales_id = random.randint(10000, 99999)
 
-
-
-
-
+def product_name(product_id):
+    for row in ws1.iter_rows(min_row=1,values_only=True):
+        if row[0] == product_id:
+            return row[1]
+    return None
 
 
 def login(user,password):
@@ -25,7 +26,7 @@ def login(user,password):
         if row[0] == user and row[1] == password:
             return True
     return False    
-def checkadmin():
+def checkadmin(role):
     for row in ws3.iter_rows(min_row = 1,values_only = True):
         if row[1] == role:
             return True
@@ -38,19 +39,19 @@ def check_product(code):
             return True
     return False
 
-def print_price(code):
+def get_price(code):
     for row in ws1.iter_rows(min_row=1, max_col=5, values_only=True):
         if row[0] == code:
             return row[3]
-    return None
 
+    return None
 def print_reciept(sales_id):
     print("Reciept")
     print(f"Sales ID: {sales_id}")
     for row in ws2.iter_rows(min_row=1,values_only=True):
         if row[0] == sales_id:
             reciept = (row[2], row[3], row[4], row[5])
-    print(reciept)
+        return reciept
 
 def update_stock(code, qty_sold):
     for row in ws1.iter_rows(min_row=2):
@@ -61,31 +62,15 @@ def update_stock(code, qty_sold):
                 print(f"Not enough stock for {code}! Only {current_stock} left.")
                 return False
             row[4].value = new_stock
-            wb1.save(Inventory_Database)
             return True
     return False 
 
-def buy(sale_input):
+def buy(product_id,qty):
     now = datetime.now()
-    if "*" in sale_input:
-        try:
-            code, qty = sale_input.split("*")
-            qty = int(qty)
-        except ValueError:
-            return False
-    else:
-        code = sale_input
-        qty = 1
-
-    if check_product(code):
-
-        update_stock(code,qty)
-        p = print_price(code)
-        subtotal = float(p) * qty
-        ws2.append([sales_id, now.strftime("%Y-%m-%d %H:%M:%S"), code, qty, p, float(subtotal)])
-
-    print(sales_id, now.strftime("%Y-%m-%d %H:%M:%S"), code, qty, p, float(subtotal))
-buy("B002*2")
+    update_stock(product_id,qty)
+    p = get_price(product_id)
+    subtotal = float(p) * qty
+    ws2.append([sales_id, now.strftime("%Y-%m-%d %H:%M:%S"), product_id, qty, p, float(subtotal)])
     
 def save():
     wb2.save("sale.xlsx")
