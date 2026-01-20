@@ -40,10 +40,10 @@ def checkadmin(role):
 
 
 def check_product(code):
-    for cell in ws1.iter_rows(min_row=1, max_col=1, values_only=True):
-        if cell[0] == code:
+    for row in ws1.iter_rows(min_row=1, max_col=1, values_only=True):
+        if row[0] == code:
             return True
-    return False
+    return(False)
 
 def get_price(code):
     for row in ws1.iter_rows(min_row=1, max_col=5, values_only=True):
@@ -79,4 +79,12 @@ def buy(product_id,qty,sales_id):
 def save():
     wb2.save("sale.xlsx")
     wb1.save("Database.xlsx")
-chnage_stock("A001",23)
+
+def add_new(product_Id, name,category,price,qty,rodlvl):
+    ws1.append([product_Id.upper(), name.title(),category.title(),int(price),int(qty),int(rodlvl)])
+    wb1.save("Database.xlsx")
+def remove(product_ID):
+    for row in ws1.iter_rows(min_row=1):
+        if row[0].value == product_ID:
+            ws1.delete_rows(row[0].row,1)
+            wb1.save("Database.xlsx")

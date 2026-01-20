@@ -176,8 +176,81 @@ def change_stock():
     Button(popup,text="Submit",command=confirmstock).pack()
     Button(popup,text="Cancel",command=close).pack()
 
+def add_product():
+    popup = Toplevel(POS)
+    popup.title("Add Product")
+    popup.geometry("700x500")
+    popup.grab_set()
+    Label(popup,text="Enter Product ID").pack()
+    product = Entry(popup)
+    product.pack()
+    Label(popup,text="Enter Product Name").pack()
+    name = Entry(popup)
+    name.pack()
+    Label(popup,text="Enter Product Category").pack()
+    category = Entry(popup)
+    category.pack()
+    Label(popup,text="Enter Product Price").pack()
+    price = Entry(popup)
+    price.pack()
+    Label(popup,text="Enter Product Stock/s").pack()
+    stocks = Entry(popup)
+    stocks.pack()
+    Label(popup,text="Enter Product Reorder lvl").pack()
+    reorder = Entry(popup)
+    reorder.pack()
+    def submit():
+        try:
+            Backend.add_new(product.get(),name.get(),category.get(),price.get(),stocks.get(),reorder.get())
+            messagebox.showinfo("SUCESS",f"Successfully added {name.get()} worth {price.get()} with {stocks.get()} stocks")
+            product.delete(0,END)
+            name.delete(0,END)
+            category.delete(0,END)
+            price.delete(0,END)
+            stocks.delete(0,END)
+            reorder.delete(0,END)
+            
+        except ValueError:
+            messagebox.showwarning("Warning", "pls enter integers/decimals on price,stocks and reorder lvl")
+            price.delete(0,END)
+            stocks.delete(0,END)
+            reorder.delete(0,END)
+    def exit():
+        popup.destroy()
+    Button(popup,text="Submit",command=submit).pack()
+    Button(popup,text="Exit",command=exit).pack()
 
+def remove():
+    popup = Toplevel(POS)
+    popup.title("Remove Product")
+    popup.geometry("200x200")
+    popup.grab_set()
+    Label(popup,text="Enter Product ID to be Removed").pack()
+    product = Entry(popup)
+    product.pack()
+    def submit():
+        if Backend.check_product(product.get()):
+            pop = Toplevel(POS)
+            pop.title("Confirm Removal")
+            pop.geometry("250x150")
+            pop.grab_set()
+            Label(pop,text=f"Are you sure you wanna remove {Backend.product_name(product.get())}?").pack()
+            def ye():
+                pop.destroy()
+                messagebox.showinfo("SUCCESS",f"Sucessfully removed {Backend.product_name(product.get())} ")
+                Backend.remove(product.get())
+                product.delete(0,END)
+            def nah():
+                pop.destroy()
 
+            Button(pop,text="YE",command=ye).pack()
+            Button(pop,text="NAH",command=nah).pack()
+        else:
+            messagebox.showwarning("W","Cant Find Code")
+    def cancel():
+        popup.destroy()
+    Button(popup,text="Submit",command=submit).pack()
+    Button(popup,text="Cancel",command=cancel).pack()
 
 
 
@@ -207,9 +280,9 @@ product_entry.bind("<Return>",addtocart)
 Label(salesframe,textvariable=total_var,font=("arial",18)).grid(column=4,row=9,sticky="nsew",pady=10)
 logout_button = Button(salesframe,text="Log Out",command=logout)
 logout_button.grid(row=1,column=0,sticky="nsew",columnspan=2)
-add_product_button = Button(salesframe,text="Add PRoduct")
+add_product_button = Button(salesframe,text="Add PRoduct",command=add_product)
 add_product_button.grid(row=2,column=0,sticky="nsew")
-remove_product_button = Button(salesframe,text="Remove PRoduct")
+remove_product_button = Button(salesframe,text="Remove Product",command=remove)
 remove_product_button.grid(row=3,column=0,sticky="nsew")
 change_stock_button = Button(salesframe,text="Change Stock",command=change_stock)
 change_stock_button.grid(row=4,column=0,sticky='nsew')
