@@ -2,12 +2,19 @@ from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
 import Backend
+import random
 POS = Tk()
 POS.geometry("800x1000")
 loginframe = Frame(POS)
 salesframe = Frame(POS)
 adminframe = Frame(POS)
 auditframe = Frame(POS)
+
+Sales_ID = random.randint(1000,9999)
+Temp_Total = 0.0
+total_var = StringVar()
+total_var.set("Total: ")
+change = 0.0
 
 
 #----------------------LOGIN FRAME-------------------------------------------------------------------
@@ -48,6 +55,7 @@ item_list = ttk.Treeview(salesframe,columns=("Product","Quantity","Price","Subto
 item_list.grid(row=2,column=3,columnspan=3,rowspan=7,sticky='nsew')
 
 def addtocart(event=None):
+    global Temp_Total
     product = product_entry.get()
     if "*" in product_entry.get():
         try:
@@ -63,48 +71,90 @@ def addtocart(event=None):
         qty = 1
     
     if Backend.check_product(product_code):
-        Backend.buy(product_code,qty)
+        Backend.buy(product_code,qty,Sales_ID)
         item_list.insert("",END,values=(Backend.product_name(product_code),qty,Backend.get_price(product_code),float(qty*Backend.get_price(product_code))))
         product_entry.delete(0, END)
+        Temp_Total += float(qty*Backend.get_price(product_code))
+        total_var.set(f"Total: {Temp_Total:.2f}")
+    else:
+        messagebox.showerror("WARNING","INVALID PRODUCT ID")
+        product_entry.delete(0, END)
+def finish_transaction():
+    popup = Toplevel(POS)
+    popup.title("Finish Transaction")
+    popup.geometry("250x180")
+    popup.grab_set()
+    Label(popup,text = f"TOTAL: {Temp_Total}").pack()
+    Label(popup,text="Cash Recieved:").pack()
+    cash = Entry(popup)
+    cash.pack()
+    def changes(event=None):
+        global change
+        global Sales_ID
+        try:
+            change += (float(cash.get()) - Temp_Total)
+            messagebox.showinfo("CHANGE",f" Your Change is: {change}")
+            Sales_ID = random.randint(1000,9999)
+            Backend.save()
+            popup.destroy()
 
-    
+
+        except ValueError:
+            messagebox.showerror("Invalid entry format!", "YOU CANNOT SUBTRACT THAT TO A NUMBER YEA?")
+            cash.delete(0, END)
+
+    Button(popup,text="Confirm",command=changes).pack()
+
+def printreceipt():
+    popup = Toplevel(POS)
+    popup.title("PRINT RECEIPT")
+    popup.geometry("250x180")
+    popup.grab_set()
+    for i in range(2):
+        popup.columnconfigure(i,weight=1)
+        popup.rowconfigure(i,weight=1)
+    Label(popup,text="Enter Trasaction ID").grid(row=0,column=0)
+    transac_id = Entry(popup)
+    transac_id.grid(row=0,column=1,sticky="nsew")
+    def printrec():
+            popup1 = Toplevel(POS)
+            
+            popup.destroy
+        
+
+    Button(popup,text="Submit",command=printrec).grid(row=1,column=0,columnspan=2,sticky="nsew")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 product_entry.bind("<Return>",addtocart)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Label(salesframe,textvariable=total_var,font=("arial",18)).grid(column=4,row=9,sticky="nsew",pady=10)
 logout_button = Button(salesframe,text="Log Out")
 logout_button.grid(row=1,column=0,sticky="nsew",columnspan=2)
 add_product_button = Button(salesframe,text="Add PRoduct")
@@ -113,7 +163,7 @@ remove_product_button = Button(salesframe,text="Remove PRoduct")
 remove_product_button.grid(row=3,column=0,sticky="nsew")
 change_stock_button = Button(salesframe,text="Change Stock")
 change_stock_button.grid(row=4,column=0,sticky='nsew')
-print_reciept_button = Button(salesframe,text="Print reciept")
+print_reciept_button = Button(salesframe,text="Print reciept",command=printreceipt)
 print_reciept_button.grid(row=5,column=0,sticky='nsew')
 sale_summary_button = Button(salesframe,text="Sales Summary")
 sale_summary_button.grid(row=2,column=1,sticky='nsew')
@@ -121,9 +171,8 @@ add_user_button = Button(salesframe,text="Add User")
 add_user_button.grid(row=3,column=1,sticky='nsew')
 remove_user_button = Button(salesframe,text="Remove User")
 remove_user_button.grid(row=4,column=1,sticky='nsew')
-finish_transac_button = Button(salesframe,text="Finish Transaction")
+finish_transac_button = Button(salesframe,text="Finish Transaction",command=finish_transaction)
 finish_transac_button.grid(row=5,column=1,sticky="nsew")
-
 
 
 

@@ -12,7 +12,6 @@ ws2 = wb2.active
 wb3 = load_workbook(user_database)
 ws3 = wb3.active
 
-sales_id = random.randint(10000, 99999)
 
 def product_name(product_id):
     for row in ws1.iter_rows(min_row=1,values_only=True):
@@ -46,12 +45,10 @@ def get_price(code):
 
     return None
 def print_reciept(sales_id):
-    print("Reciept")
-    print(f"Sales ID: {sales_id}")
     for row in ws2.iter_rows(min_row=1,values_only=True):
-        if row[0] == sales_id:
-            reciept = (row[2], row[3], row[4], row[5])
-        return reciept
+        if row[0] == int(sales_id):
+            return(row[2], row[3], row[4], row[5])
+    return False
 
 def update_stock(code, qty_sold):
     for row in ws1.iter_rows(min_row=2):
@@ -65,7 +62,7 @@ def update_stock(code, qty_sold):
             return True
     return False 
 
-def buy(product_id,qty):
+def buy(product_id,qty,sales_id):
     now = datetime.now()
     update_stock(product_id,qty)
     p = get_price(product_id)
@@ -75,3 +72,4 @@ def buy(product_id,qty):
 def save():
     wb2.save("sale.xlsx")
     wb1.save("Database.xlsx")
+print_reciept(8619)
