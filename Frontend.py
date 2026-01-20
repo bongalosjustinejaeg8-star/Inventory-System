@@ -14,7 +14,7 @@ auditframe = Frame(POS)
 Sales_ID = random.randint(1000,9999)
 Temp_Total = 0.0
 total_var = StringVar()
-total_var.set("Total: ")
+total_var.set(f"Total:{Temp_Total:.2f} ")
 change = 0.0
 is_admin = False
 is_audit = False
@@ -93,12 +93,17 @@ def finish_transaction():
     cash = Entry(popup)
     cash.pack()
     def changes(event=None):
+        global Temp_Total
         global change
         global Sales_ID
         try:
             change += (float(cash.get()) - Temp_Total)
             messagebox.showinfo("CHANGE",f" Your Change is: {change}")
             Sales_ID = random.randint(1000,9999)
+            for item in item_list.get_children():
+                item_list.delete(item)
+            Temp_Total = 0
+            total_var.set(f"Total: {Temp_Total:.2f} ")
             Backend.save()
             popup.destroy()
 
