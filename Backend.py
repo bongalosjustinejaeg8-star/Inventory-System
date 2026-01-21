@@ -250,11 +250,11 @@ def low_stock_alerts():
 def remove_ppl(removed_name):
     for row in ws3.iter_rows(min_row=1):
         if str(row[0].value).strip().upper() == removed_name:
-            ws1.delete_rows(row[0].row, 1)
-            wb1.save(Inventory_Database)
+            ws3.delete_rows(row[0].row, 1)
+            wb3.save(User_Database)
             return True
     return False
 def add_ppl(username,role,password):
     ws3.append([username,role,password])
-    wb3.save(Inventory_Database)
+    wb3.save(User_Database)
     return True
