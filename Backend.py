@@ -67,15 +67,25 @@ def product_name(product_id):
 
 def login(user,password):
     for row in ws3.iter_rows(min_row = 1,values_only = True):
-        if row[0] == user and row[1] == password:
+        if row[0] == user and row[2] == password:
             return True
     return False
     
-def checkadmin(role):
+def checkadmin(user):
     for row in ws3.iter_rows(min_row = 1,values_only = True):
-        if row[1] == role:
-            return True
+        if row[0] == user:
+            if row[1] == "Admin":
+                return True
+            return False
     return False
+def checkaudit(user):
+    for row in ws3.iter_rows(min_row = 1,values_only = True):
+        if row[0] == user:
+            if row[1] == "Audit":
+                return True
+            return False
+    return False
+
 
 
 # IMPROVED ADD AND REMOVE SO IT TRACKS IN LOG MOVEMENTS
@@ -236,3 +246,15 @@ def low_stock_alerts():
         if stock <= reorder:
             data.append({"product_id": pid, "name": name, "stock": stock, "reorder": reorder})
     return data
+
+def remove_ppl(removed_name):
+    for row in ws3.iter_rows(min_row=1):
+        if str(row[0].value).strip().upper() == removed_name:
+            ws1.delete_rows(row[0].row, 1)
+            wb1.save(Inventory_Database)
+            return True
+    return False
+def add_ppl(username,role,password):
+    ws3.append([username,role,password])
+    wb3.save(Inventory_Database)
+    return True
