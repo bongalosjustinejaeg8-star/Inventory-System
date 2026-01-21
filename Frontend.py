@@ -165,8 +165,8 @@ def change_stock():
     stock_entry = Entry(popup)
     stock_entry.pack()
     def confirmstock():
-        if Backend.check_product(product_entry.get().strip().upper()):
-            Backend.chnage_stock(product_entry.get().strip(),stock_entry.get().strip())
+        if Backend.get_product(product_entry.get().strip().upper()):
+            Backend.change_stock(product_entry.get().strip(),stock_entry.get().strip())
             messagebox.showinfo("STOCKS","Stocks has been updated")
             popup.destroy()
         else:
@@ -229,7 +229,7 @@ def remove():
     product = Entry(popup)
     product.pack()
     def submit():
-        if Backend.check_product(product.get()):
+        if Backend.get_product(product.get()):
             pop = Toplevel(POS)
             pop.title("Confirm Removal")
             pop.geometry("250x150")
