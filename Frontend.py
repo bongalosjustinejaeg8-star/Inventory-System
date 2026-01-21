@@ -365,7 +365,7 @@ def remove():
 def sales_summary():
     popup = Toplevel(POS)
     popup.title("ANALYTICS")
-    popup.geometry("550x250")
+    popup.geometry("800x500")
     popup.grab_set()
     Label(popup,text="PRODUCT RANKINGS BASED ON NO# of SALES",font=("times new roman",16,"bold")).pack()
     rank_table = ttk.Treeview(popup,columns=("rank","id","product","sold"),show="headings")
