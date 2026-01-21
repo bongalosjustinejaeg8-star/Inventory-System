@@ -389,7 +389,41 @@ def sales_summary():
             item["name"],
             item["total_sold"])
         )
+    product = Backend.get_all_products()    
+    product_list = ttk.Treeview(
+    popup,
+    columns=("id", "name", "category", "price", "stock", "reorder"),
+    show="headings",
+    height=10
+    )
+    product_list.heading("id", text="ID")
+    product_list.heading("name", text="Name")
+    product_list.heading("category", text="Category")
+    product_list.heading("price", text="Price")
+    product_list.heading("stock", text="Stock")
+    product_list.heading("reorder", text="Reorder Level")
+    product_list.column("id", width=60, anchor="center")
+    product_list.column("name", width=150)
+    product_list.column("category", width=120)
+    product_list.column("price", width=80, anchor="e")
+    product_list.column("stock", width=80, anchor="center")
+    product_list.column("reorder", width=100, anchor="center")
+    for p in product:
+        product_list.insert(
+            "",
+            "end",
+            values=(
+                product["product_id"],
+                product["name"],
+                product["category"],
+                product["price"],
+                product["stock"],
+                product["reorder"]
+            )
+    )
+        
 
+    product_list.pack()
 def remove_user():
     if is_admin:
         popup = Toplevel(POS)
