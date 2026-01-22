@@ -73,6 +73,9 @@ def login_user():
             is_admin = True
         elif Backend.checkaudit(user_entry.get()):
             is_audit = True
+        else:
+            is_audit = False
+            is_admin = False
         user_entry.delete(0, END)
         user_password.delete(0, END)
         loginframe.pack_forget()
@@ -258,11 +261,15 @@ def printreceipt():
 
 
 def logout():
+    global is_audit
+    global is_admin
     pop = Toplevel(POS, background='#940000')
     pop.title("WARNING")
     pop.geometry("300x200+500+250")
     Label(pop,text="LOG OUT?",font=("times new roman",20,"bold"),bg='Yellow', fg='Black',relief=RIDGE, bd=10).place(x=70, y=10)
     def yeah():
+        is_admin = False
+        is_audit = False
         pop.destroy()
         salesframe.pack_forget()
         loginframe.pack(fill = "both",expand=True)
@@ -371,98 +378,100 @@ def change_stock():
 
 
 def add_product():
-    popup = Toplevel(POS)
-    popup.title("Add Product")
-    popup.geometry("700x500+300+150")
-    popup.config(background='#275c70')
-    popup.grab_set()
-    Label(popup, text="Enter Product ID", font=("times new roman", 15, 'bold'),
-          bg="#00403d",
-          fg='#B8E3E9',
-          relief=RIDGE,
-          bd='5',
-          width=20).pack()
-    product = Entry(popup, font=("arial", 15, 'bold'))
-    product.pack()
-    Label(popup, text="Enter Product Name", font=("times new roman", 15, 'bold'),
-          bg="#00403d",
-          fg='#B8E3E9',
-          relief=RIDGE,
-          bd='5',
-          width=20).pack()
-    name = Entry(popup, font=("arial", 15, 'bold'))
-    name.pack()
-    Label(popup, text="Enter Product Category", font=("times new roman", 15, 'bold'),
-          bg="#00403d",
-          fg='#B8E3E9',
-          relief=RIDGE,
-          bd='5',
-          width=20).pack()
-    category = Entry(popup, font=("arial", 15, 'bold'))
-    category.pack()
-    Label(popup, text="Enter Product Price", font=("times new roman", 15, 'bold'),
-          bg="#00403d",
-          fg='#B8E3E9',
-          relief=RIDGE,
-          bd='5',
-          width=20).pack()
-    price = Entry(popup, font=("arial", 15, 'bold'))
-    price.pack()
-    Label(popup, text="Enter Product Stock/s", font=("times new roman", 15, 'bold'),
-          bg="#00403d",
-          fg='#B8E3E9',
-          relief=RIDGE,
-          bd='5',
-          width=20).pack()
-    stocks = Entry(popup, font=("arial", 15, 'bold'))
-    stocks.pack()
-    Label(popup, text="Enter Product Reorder lvl", font=("times new roman", 15, 'bold'),
-          bg="#00403d",
-          fg='#B8E3E9',
-          relief=RIDGE,
-          bd='5',
-          width=20).pack()
-    reorder = Entry(popup, font=("arial", 15, 'bold'))
-    reorder.pack()
+    if is_audit or is_admin:
+        popup = Toplevel(POS)
+        popup.title("Add Product")
+        popup.geometry("700x500+300+150")
+        popup.config(background='#275c70')
+        popup.grab_set()
+        Label(popup, text="Enter Product ID", font=("times new roman", 15, 'bold'),
+            bg="#00403d",
+            fg='#B8E3E9',
+            relief=RIDGE,
+            bd='5',
+            width=20).pack()
+        product = Entry(popup, font=("arial", 15, 'bold'))
+        product.pack()
+        Label(popup, text="Enter Product Name", font=("times new roman", 15, 'bold'),
+            bg="#00403d",
+            fg='#B8E3E9',
+            relief=RIDGE,
+            bd='5',
+            width=20).pack()
+        name = Entry(popup, font=("arial", 15, 'bold'))
+        name.pack()
+        Label(popup, text="Enter Product Category", font=("times new roman", 15, 'bold'),
+            bg="#00403d",
+            fg='#B8E3E9',
+            relief=RIDGE,
+            bd='5',
+            width=20).pack()
+        category = Entry(popup, font=("arial", 15, 'bold'))
+        category.pack()
+        Label(popup, text="Enter Product Price", font=("times new roman", 15, 'bold'),
+            bg="#00403d",
+            fg='#B8E3E9',
+            relief=RIDGE,
+            bd='5',
+            width=20).pack()
+        price = Entry(popup, font=("arial", 15, 'bold'))
+        price.pack()
+        Label(popup, text="Enter Product Stock/s", font=("times new roman", 15, 'bold'),
+            bg="#00403d",
+            fg='#B8E3E9',
+            relief=RIDGE,
+            bd='5',
+            width=20).pack()
+        stocks = Entry(popup, font=("arial", 15, 'bold'))
+        stocks.pack()
+        Label(popup, text="Enter Product Reorder lvl", font=("times new roman", 15, 'bold'),
+            bg="#00403d",
+            fg='#B8E3E9',
+            relief=RIDGE,
+            bd='5',
+            width=20).pack()
+        reorder = Entry(popup, font=("arial", 15, 'bold'))
+        reorder.pack()
 
-    def submit():
-        try:
-            Backend.add_new(product.get(), name.get(), category.get(), price.get(), stocks.get(), reorder.get())
-            messagebox.showinfo("SUCESS",
-                                f"Successfully added {name.get()} worth {price.get()} with {stocks.get()} stocks")
-            product.delete(0, END)
-            name.delete(0, END)
-            category.delete(0, END)
-            price.delete(0, END)
-            stocks.delete(0, END)
-            reorder.delete(0, END)
+        def submit():
+            try:
+                Backend.add_new(product.get(), name.get(), category.get(), price.get(), stocks.get(), reorder.get())
+                messagebox.showinfo("SUCESS",
+                                    f"Successfully added {name.get()} worth {price.get()} with {stocks.get()} stocks")
+                product.delete(0, END)
+                name.delete(0, END)
+                category.delete(0, END)
+                price.delete(0, END)
+                stocks.delete(0, END)
+                reorder.delete(0, END)
 
-        except ValueError:
-            messagebox.showwarning("Warning", "pls enter integers/decimals on price,stocks and reorder lvl")
-            price.delete(0, END)
-            stocks.delete(0, END)
-            reorder.delete(0, END)
+            except ValueError:
+                messagebox.showwarning("Warning", "pls enter integers/decimals on price,stocks and reorder lvl")
+                price.delete(0, END)
+                stocks.delete(0, END)
+                reorder.delete(0, END)
 
-    def exit():
-        popup.destroy()
+        def exit():
+            popup.destroy()
 
-    Button(popup, text="Submit", font=('arial', 15, 'bold'),
-           bg="#1a7000",
-           fg='black',
-           activebackground='#33d900',
-           activeforeground='white',
-           relief=GROOVE,
-           bd=10, width=15,
-           command=submit).pack()
-    Button(popup, text="Exit", font=('arial', 15, 'bold'),
-           bg="red",
-           fg='white',
-           activebackground='maroon',
-           activeforeground='white',
-           relief=GROOVE,
-           bd=10, width=15,
-           command=exit).pack()
-
+        Button(popup, text="Submit", font=('arial', 15, 'bold'),
+            bg="#1a7000",
+            fg='black',
+            activebackground='#33d900',
+            activeforeground='white',
+            relief=GROOVE,
+            bd=10, width=15,
+            command=submit).pack()
+        Button(popup, text="Exit", font=('arial', 15, 'bold'),
+            bg="red",
+            fg='white',
+            activebackground='maroon',
+            activeforeground='white',
+            relief=GROOVE,
+            bd=10, width=15,
+            command=exit).pack()
+    else:
+        messagebox.showwarning("Warning","You need to be an Admin/Audit to make Changes")
 
 def remove():
     if is_admin or is_audit:
