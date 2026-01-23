@@ -2,7 +2,7 @@ import os
 from openpyxl import Workbook, load_workbook
 from datetime import datetime
 
-Inventory_Database = "Database.xlsx"
+Inventory_Database = "product.xlsx"
 Sales_Database = "sale.xlsx"
 user_database = "user.xlsx"
 Movement_Database = "inventory_movements.xlsx"
@@ -108,7 +108,7 @@ def print_receipt(sales_id):
     return None
 
 def save():
-    wb1.save("Database.xlsx")
+    wb1.save("product.xlsx")
     wb2.save("sale.xlsx")
     wb3.save("user.xlsx")
     wb4.save("inventory_movements.xlsx")
