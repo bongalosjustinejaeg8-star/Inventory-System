@@ -3,7 +3,7 @@ from openpyxl import Workbook, load_workbook
 from datetime import datetime
 
 # ADDED MOVMENT DATA BASE
-Inventory_Database = "Database.xlsx"
+Inventory_Database = "product.xlsx"
 Sales_Database = "sale.xlsx"
 User_Database = "user.xlsx"
 Movement_Database = "inventory_movements.xlsx"
@@ -166,7 +166,7 @@ def log_movement(product_id, movement_type, quantity, remarks):
 
 # IMPROVED SAVE FUNCTION, CALL THIS WHENEVER THE SYSTEM IS CLOSED
 def save():
-    wb1.save("Database.xlsx")
+    wb1.save("product.xlsx")
     wb2.save("sale.xlsx")
     wb3.save("user.xlsx")
     wb4.save("inventory_movements.xlsx")
