@@ -249,7 +249,7 @@ def low_stock_alerts():
 
 def remove_ppl(removed_name):
     for row in ws3.iter_rows(min_row=1):
-        if str(row[0].value).strip() == removed_name:
+        if str(row[0].value).strip().upper() == removed_name:
             ws3.delete_rows(row[0].row, 1)
             wb3.save(User_Database)
             return True
@@ -258,8 +258,3 @@ def add_ppl(username,role,password):
     ws3.append([username,role,password])
     wb3.save(User_Database)
     return True
-def check_ppl(name):
-    for row in ws3.iter_rows(min_row=1,values_only=True):
-        if row[0] == name:
-            return True
-    return False
