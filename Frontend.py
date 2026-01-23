@@ -294,7 +294,7 @@ def logout():
 
 def change_stock():
     if is_audit or is_admin:
-        Inventory_Database = "Database.xlsx"
+        Inventory_Database = "product.xlsx"
         wb1 = load_workbook(Inventory_Database)
         ws1 = wb1.active
         popup = Toplevel(POS)
